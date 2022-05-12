@@ -1,0 +1,18 @@
+<%- include('./includes/header.ejs')  %>
+</head>
+<body>
+    <h1><%= pageTitle %></h1>
+    <img src="images/logo.png" alt="">
+    <form action="/login" method="POST">
+        <div>
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email">
+        </div>
+        <div>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password">
+        </div>
+        <button type="submit">Login</button>
+    </form>
+</body>
+</html>
