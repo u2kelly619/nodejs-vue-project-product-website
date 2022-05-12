@@ -106,14 +106,16 @@ app.get('/', (req, res) => {
     // res.status(200).sendFile(path.join(__dirname, 'views', 'index.html')); //把node資料夾>views>index.html的檔案拿來顯示
     res.status(200).render('index.ejs',{
         pageTitle: 'This is index page.',
-        products: products //將常數 products 賦予給路由參數products，products: products可簡寫成products(key和value相同)
+        products: products, //將常數 products 賦予給路由參數products，products: products可簡寫成products(key和value相同)
+        path: '/' 
     });
 });
 
 app.get('/login', (req, res) => {
     // res.status(200).sendFile(path.join(__dirname, 'views', 'login.html')); //把node資料夾>views>login.html的檔案拿來顯示
     res.status(200).render('login.ejs',{
-        pageTitle: 'This is login page.'
+        pageTitle: 'This is login page.',
+        path: '/login'
     });
 });
 

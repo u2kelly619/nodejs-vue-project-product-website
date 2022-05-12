@@ -1,6 +1,7 @@
 <%- include('./includes/header.ejs')  %>
 </head>
 <body>
+    <%- include('./includes/navbar.ejs')  %>
     <h1><%= pageTitle %></h1>
     <img src="images/product.png" alt="">
     <% if(products.length>0){ %>
@@ -11,5 +12,4 @@
     <% } else { %>
         <h2>尚無商品</h2>
     <% } %>
-</body>
-</html>
+    <%- include('./includes/footer.ejs')  %>
