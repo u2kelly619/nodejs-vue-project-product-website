@@ -1,12 +1,18 @@
 // console.log("hello world");
 
-//第一個區塊，內建模組
+////第一個區塊，內建模組
 const path = require('path');
 // const http = require('http');
 
-//第二個區塊，第三方模組(套件)
+////第二個區塊，第三方模組(套件)
+//Express web server
+const express = require('express');
 
-//第三個區塊，自建模組
+const bodyParser = require('body-parser');
+//匯入第三方模組 sequelize
+const Sequelize = require('sequelize'); 
+
+////第三個區塊，自建模組
 // const hello = require("./hello.js");
 
 // hello.sayHello();
@@ -45,12 +51,10 @@ const path = require('path');
 
 // console.log(url.parse('https://www.notion.so/e6889306d6e44a328b85a2b188f5a36a?v=d331e5cab96e497f9499181fce10bf76'));
 
-//Express web server
-const express = require('express');
 const app = express();
 
-const bodyParser = require('body-parser');
-
+//引入utils的database模組
+const database = require('./utils/database');
 //引入auth.js的模組
 const authRoutes = require('./routes/auth');
 //引入shop.js的模組
@@ -58,7 +62,7 @@ const shopRoutes = require('./routes/shop');
 //引入error.js的模組
 const errorRoutes = require('./routes/error');
 
-//middleware
+////middleware
 
 //設定ejs
 app.set('view engine', 'ejs'); //使用ejs的view engine樣板引擎
@@ -89,6 +93,17 @@ app.use(shopRoutes);
 //使用error.js的模組
 app.use(errorRoutes);
 
-app.listen(3030, () => {
-	console.log('Web Server is running on port 3030');
-});
+// app.listen(3030, () => {
+// 	console.log('Web Server is running on port 3030');
+// });
+//改寫成promise:
+database
+	.sync()
+	.then((result) => {
+		app.listen(3030, () => {
+			console.log('Web Server is running on port 3030');
+		});
+	})
+	.catch((err) => {
+		console.log('create web server error: ', err);
+	});
