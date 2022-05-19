@@ -106,9 +106,9 @@ database
 	// .sync({ force: true })
     .sync()
 	.then((result) => {
-        User.create({ displayName: 'Admin', email: 'admin@skoob.com', password: '11111111'})
+        // User.create({ displayName: 'Admin', email: 'admin@skoob.com', password: '11111111'})
         //bulkCreate(array):輸入多筆資料的方法 
-        Product.bulkCreate(products);
+        // Product.bulkCreate(products);
 		app.listen(3030, () => {
 			console.log('Web Server is running on port 3030');
 		});
