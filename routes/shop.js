@@ -2,25 +2,16 @@
 
 //引入express
 const express = require('express');
+//引入shop的controller模組
+const shopController = require('../controllers/shop');
+
 //使用中介軟體express中的Router()
 const router = express.Router();
 
 //get寫在use之後，因get會進到別的頁面(?)，不會再進中介軟體
 //預設發起請求後會自動結束，所以不需要next參數
 //處理路由/的get請求
-router.get('/', (req, res) => {
-    // res.writeHead(200, { 'Content-Type': 'text/html' });
-    // res.write('<head><meta charset="utf-8" /></head>')
-    // res.write('<body>')
-    // res.write('<h1>這是首頁</h1>')
-    // res.write('</body>')
-    // res.status(200).sendFile(path.join(__dirname, 'views', 'index.html')); //把node資料夾>views>index.html的檔案拿來顯示
-    res.status(200).render('index.ejs',{
-        pageTitle: 'This is index page.',
-        products: products, //將常數 products 賦予給路由參數products，products: products可簡寫成products(key和value相同)
-        path: '/' 
-    });
-});
+router.get('/', shopController.getIndex);
 
 //匯出模組
 module.exports = router;
