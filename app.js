@@ -1,18 +1,20 @@
 // console.log("hello world");
 
-////第一個區塊，內建模組
+//------第一個區塊，內建模組------
 const path = require('path');
 // const http = require('http');
 
-////第二個區塊，第三方模組(套件)
+//------第二個區塊，第三方模組(套件)------
 //Express web server
 const express = require('express');
-
+//解析post回來的資料(request body)
 const bodyParser = require('body-parser');
-//匯入第三方模組 sequelize
+//匯入sequelize
 const Sequelize = require('sequelize'); 
+//處理session的express-session套件
+const session = require('express-session');
 
-////第三個區塊，自建模組
+//------第三個區塊，自建模組------
 // const hello = require("./hello.js");
 
 // hello.sayHello();
@@ -66,7 +68,7 @@ const Product = require('./models/product');
 //引入models的User模組
 const User = require('./models/user');
 
-////middleware
+//------middleware (由上而下執行)------
 
 //設定ejs
 app.set('view engine', 'ejs'); //使用ejs的view engine樣板引擎
@@ -77,7 +79,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // app.use((req, res, next) => {
 // 	console.log('Hello!');
-// 	next(); //加上next()讓電腦知道該中介軟體已結束，要進入下一個
+// 	next(); //自定義的函式要加上next()讓電腦知道該中介軟體已結束，要進入下一個
 // });
 
 // app.use((req, res, next) => {
@@ -85,10 +87,23 @@ app.use(express.static(path.join(__dirname, 'public')));
 // 	res.end();
 // });
 
-//使用bodyParser解析 request body
+//使用bodyParser解析post回來的資料(request body)
 app.use(bodyParser.urlencoded({ extended: false }));
 
-
+//使用express-session中介軟體的函式
+app.use(session({ 
+	secret: 'sessionToken',  // 加密用的字串
+	resave: false,   // 沒變更內容是否強制回存
+	saveUninitialized: false ,  // 新 session 未變更內容是否儲存
+	cookie: {
+		maxAge: 10000 // session 狀態儲存多久？單位為毫秒
+	}
+})); 
+app.use((req, res, next) => {
+    //locals, session都是express-session設定的全域變數
+    res.locals.isLogin = req.session.isLogin || false;
+    next();
+});
 
 //使用auth.js的模組
 app.use(authRoutes);

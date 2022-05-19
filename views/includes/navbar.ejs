@@ -10,14 +10,20 @@
             <!-- 如果path為'/'就顯示active，不是就為空 -->
             <a class="nav-link <%= path === '/' ? 'active':'' %>" aria-current="page" href="/">Home</a>
           </li>
-          <li class="nav-item">
-            <!-- 如果path為'/login'就顯示active，不是就為空 -->
-            <a class="nav-link <%= path === '/login' ? 'active':'' %>" aria-current="page" href="/login">Login</a>
-          </li>
+          <!--沒有登入狀態login才顯示active-->
+          <% if (!isLogin) { %>
+            <li class="nav-item">
+              <!-- 如果path為'/login'就顯示active，不是就為空 -->
+              <a class="nav-link <%= path === '/login' ? 'active':'' %>" aria-current="page" href="/login">Login</a>
+            </li>
+          <% } %>
         </ul>
+        <!--有登入狀態才顯示logout-->
+        <% if (isLogin) { %>
         <form class="d-flex" action="/logout" method="POST">
             <button class="btn btn-outline-success" type="submit">Logout</button>
-          </form>
+        </form>
+        <% } %>
       </div>
     </div>
 </nav>
