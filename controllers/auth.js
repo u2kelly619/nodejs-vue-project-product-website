@@ -1,7 +1,7 @@
 //變成一個function
 const getLogin = (req, res) => {
     // res.status(200).sendFile(path.join(__dirname, 'views', 'login.html')); //把node資料夾>views>login.html的檔案拿來顯示
-    res.status(200).render('login.ejs',{
+    res.status(200).render('auth/login',{
         pageTitle: 'This is login page.',
         path: '/login'
     });
