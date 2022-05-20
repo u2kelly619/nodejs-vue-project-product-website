@@ -54,6 +54,8 @@ const session = require('express-session');
 // console.log(url.parse('https://www.notion.so/e6889306d6e44a328b85a2b188f5a36a?v=d331e5cab96e497f9499181fce10bf76'));
 
 const app = express();
+const port = 3000; //web server運行的port，方便維護
+const oneDay = 1000*60*60*24; //for session儲存時間
 
 //引入utils的database模組
 const database = require('./utils/database');
@@ -100,6 +102,7 @@ app.use(session({
 	}
 })); 
 app.use((req, res, next) => {
+    res.locals.path = req.url;
     //locals, session都是express-session設定的全域變數
     res.locals.isLogin = req.session.isLogin || false;
     next();
@@ -124,8 +127,8 @@ database
         // User.create({ displayName: 'Admin', email: 'admin@skoob.com', password: '11111111'})
         //bulkCreate(array):輸入多筆資料的方法 
         // Product.bulkCreate(products);
-		app.listen(3030, () => {
-			console.log('Web Server is running on port 3030');
+		app.listen(port, () => {
+			console.log(`Web Server is running on port ${port}`);
 		});
 	})
 	.catch((err) => {

@@ -6,7 +6,7 @@ const getLogin = (req, res) => {
     // res.status(200).sendFile(path.join(__dirname, 'views', 'login.html')); //把node資料夾>views>login.html的檔案拿來顯示
     res.status(200).render('auth/login',{ //render會去views資料夾抓
         pageTitle: 'This is login page.',
-        path: '/login'
+        // path: '/login'
     });
 }
 
@@ -36,8 +36,12 @@ const postLogin = (req, res) => {
 }
 
 const postLogout = (req, res) => {
-    req.session.isLogin = false;
-    res.redirect('/login');
+    //destroy()清除session，要傳入一個callback function
+    req.session.destroy((err) => {
+        console.log('session destroy() error: ', err);
+		//處理完後導回login頁
+        res.redirect('/login');
+    });
 }
 
 //建議用物件寫法
