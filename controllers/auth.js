@@ -13,9 +13,11 @@ const getLogin = (req, res) => {
 }
 
 const getSignup = (req, res) => {
+    const errorMessage = req.flash('errorMessage')[0];
     res.status(200)
         .render('auth/signup', {
             pageTitle: 'Signup',
+            errorMessage
         });
 }
 
@@ -46,6 +48,26 @@ const postLogin = (req, res) => {
         });
 }
 
+const postSignup = (req, res) => {
+    const { displayName, email, password } = req.body;
+    User.findOne({ where: { email } }) //email: email
+        .then((user) => {
+            if (user) {
+                req.flash('errorMessage', '此帳號已存在！請使用其他 Email。')
+                return res.redirect('/signup');
+            } else {
+                //寫入資料庫
+                return User.create({ displayName, email, password });
+            }
+        })
+        .then((result) => {
+            res.redirect('/login');
+        })
+        .catch((err) => {
+            console.log('signup_error', err);
+        });
+}
+
 const postLogout = (req, res) => {
     //destroy()清除session，要傳入一個callback function
     req.session.destroy((err) => {
@@ -60,5 +82,6 @@ module.exports = {
     getLogin, //getLogin: getLogin
     getSignup,
     postLogin,
+    postSignup,
     postLogout,
 }
