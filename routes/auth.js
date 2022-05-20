@@ -12,6 +12,8 @@ const router = express.Router();
 //引用authController模組物件中的getLogin函式
 router.get('/login', authController.getLogin);
 
+router.get('/signup', authController.getSignup)
+
 //處理post請求
 router.post('/login', authController.postLogin);
 

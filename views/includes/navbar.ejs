@@ -10,11 +10,15 @@
             <!-- 如果path為'/'就顯示active，不是就為空 -->
             <a class="nav-link <%= path === '/' ? 'active':'' %>" aria-current="page" href="/">Home</a>
           </li>
-          <!--沒有登入狀態login才顯示active-->
+          <!--沒有登入狀態才顯示-->
           <% if (!isLogin) { %>
             <li class="nav-item">
-              <!-- 如果path為'/login'就顯示active，不是就為空 -->
+              <!-- 如果path為'/login'就顯示active這個class，不是就為空，不會吃到這個class的設定 -->
               <a class="nav-link <%= path === '/login' ? 'active':'' %>" aria-current="page" href="/login">Login</a>
+            </li>
+            <li class="nav-item">
+              <!-- 如果path為'/signup'就顯示active這個class，不是就為空，不會吃到這個class的設定 -->
+              <a class="nav-link <%= path === '/signup' ? 'active' : '' %>" aria-current="page" href="/signup">Signup</a>
             </li>
           <% } %>
         </ul>

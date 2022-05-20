@@ -13,6 +13,8 @@ const bodyParser = require('body-parser');
 const Sequelize = require('sequelize'); 
 //處理session的express-session套件
 const session = require('express-session');
+//connect-flash套件，錯誤訊息跳頁再回來後會消失
+const connectFlash = require('connect-flash');
 
 //------第三個區塊，自建模組------
 // const hello = require("./hello.js");
@@ -74,7 +76,7 @@ const User = require('./models/user');
 
 //設定ejs
 app.set('view engine', 'ejs'); //使用ejs的view engine樣板引擎
-app.set('views', 'views'); // views的預設路徑就是 views資料夾，如果沒有變動，可以省略此設定
+app.set('views', 'views'); // views的預設路徑就是views資料夾，如果沒有變動，可以省略此設定
 
 //告知靜態資源存放路徑
 app.use(express.static(path.join(__dirname, 'public')));
@@ -102,11 +104,16 @@ app.use(session({
 	}
 })); 
 app.use((req, res, next) => {
+    //res.locals, session都是express-session設定的全域變數，每個模板都可以使用
+    //把path存到全域變數，後續可以直接使用，render時不用再傳入path參數
     res.locals.path = req.url;
-    //locals, session都是express-session設定的全域變數
+    //把isLogin存在全域變數
     res.locals.isLogin = req.session.isLogin || false;
     next();
 });
+
+//使用connect-flash模組
+app.use(connectFlash());
 
 //使用auth.js的模組
 app.use(authRoutes);
