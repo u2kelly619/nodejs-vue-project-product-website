@@ -15,6 +15,8 @@ const Sequelize = require('sequelize');
 const session = require('express-session');
 //connect-flash套件，錯誤訊息跳頁再回來後會消失
 const connectFlash = require('connect-flash');
+//csrf保護機制套件
+const csrfProtection = require('csurf');
 
 //------第三個區塊，自建模組------
 // const hello = require("./hello.js");
@@ -93,6 +95,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //使用bodyParser解析post回來的資料(request body)
 app.use(bodyParser.urlencoded({ extended: false }));
+//使用connect-flash模組
+app.use(connectFlash());
+//使用csrf模組
+app.use(csrfProtection());
 
 //使用express-session中介軟體的函式
 app.use(session({ 
@@ -109,11 +115,10 @@ app.use((req, res, next) => {
     res.locals.path = req.url;
     //把isLogin存在全域變數，登入狀態(布林值)
     res.locals.isLogin = req.session.isLogin || false;
+    //把csrfToken存在全域變數
+    res.locals.csrfToken = req.csrfToken();
     next();
 });
-
-//使用connect-flash模組
-app.use(connectFlash());
 
 //使用auth.js的模組
 app.use(authRoutes);
