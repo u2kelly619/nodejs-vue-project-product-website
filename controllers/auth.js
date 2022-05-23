@@ -71,9 +71,15 @@ const postSignup = (req, res) => {
                 return bcryptjs.hash(password, 12) //加密10的12次方次
 					//回傳加密的密碼hashedPassword
                     .then((hashedPassword) => {
+                        return User
                         //將使用者輸入的資料和加密後的密碼寫入資料庫
-                        return User.create({ displayName, email, password: hashedPassword });
-                    })
+                        .create({ displayName, email, password: hashedPassword });
+                        })
+                        .then((newUser) => {
+                            //註冊時一併建立user的cart
+                            //因為有建立cart跟user間的關係，createCart()會建立cart中的一筆帶有userId資料
+                            return newUser.createCart();
+                        })
                     .catch((err) => {
                         console.log('create new user error: ', err);
                     })

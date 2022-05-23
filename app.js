@@ -147,7 +147,7 @@ Product.belongsToMany(Cart, { through: CartItem });
 //改寫成promise:
 database
     //因為要測試資料，先清空reset再開始執行，之後可以拿掉
-	// .sync({ force: true })
+	// .sync({ force: true }) //和DB連線時，強制重設DB
     .sync()
 	.then((result) => {
         // User.create({ displayName: 'Admin', email: 'admin@skoob.com', password: '11111111'})
