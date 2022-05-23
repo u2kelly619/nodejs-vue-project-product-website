@@ -73,6 +73,10 @@ const errorRoutes = require('./routes/error');
 const Product = require('./models/product');
 //引入models的User模組
 const User = require('./models/user');
+//引入models的Cart模組
+const Cart = require('./models/cart');
+//引入models的CartItem模組
+const CartItem = require('./models/cart-item');
 
 //------middleware (由上而下執行)------
 
@@ -97,8 +101,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: false }));
 //使用connect-flash模組
 app.use(connectFlash());
-//使用csrf模組
-app.use(csrfProtection());
 
 //使用express-session中介軟體的函式
 app.use(session({ 
@@ -109,6 +111,10 @@ app.use(session({
 		maxAge: 10000 // session 狀態儲存多久？單位為毫秒
 	}
 })); 
+
+//使用csrf模組，要放在express和bodyParser之後
+app.use(csrfProtection());
+
 app.use((req, res, next) => {
     //res.locals, session都是express-session設定的全域變數，每個模板都可以使用
     //把path存到全域變數，後續可以直接使用，render時不用再傳入path參數
@@ -120,12 +126,20 @@ app.use((req, res, next) => {
     next();
 });
 
+
+
 //使用auth.js的模組
 app.use(authRoutes);
 //使用shop.js的模組
 app.use(shopRoutes);
 //使用error.js的模組
 app.use(errorRoutes);
+
+//用sequelize提供的方法建立關係
+User.hasOne(Cart);
+Cart.belongsTo(User);
+Cart.belongsToMany(Product, { through: CartItem });
+Product.belongsToMany(Cart, { through: CartItem });
 
 // app.listen(3030, () => {
 // 	console.log('Web Server is running on port 3030');
