@@ -39,7 +39,8 @@ const getCart = (req, res) => {
                 .then((products) => {
                     res.render('shop/cart', {
                         pageTitle: 'Cart',
-                        products
+                        products,
+                        amount: cart.amount
                     });
                 })
                 .catch((err) => {
@@ -51,11 +52,62 @@ const getCart = (req, res) => {
         })
 }
 
+const postCartAddItem = (req, res) => {
+    //post過來的資料(productId)為req.body(用bodyParser解讀)
+    const { productId } = req.body;
+    let userCart; //userCart = []
+    let newQuantity = 1;
+    req.user
+        .getCart() //sequelize自動產生的方法
+        .then((cart) => {
+            userCart = cart;
+            //檢查product是否已在cart(productId是從hidden的input裡傳過來的，把它當作篩選條件)
+            return cart.getProducts({ where: { id: productId }}); //sequelize自動產生的方法，因關聯是多對多，會在product加上s
+        }) //取得陣列
+        .then((products) => {
+            let product;
+            if (products.length > 0) { //如果有資料(陣列長度>0)，表示購物車已經有該product
+                product = products[0]; //抓陣列的第一筆(也只會有一筆)
+                const oldQuantity = product.cartItem.quantity;
+                newQuantity = oldQuantity + 1; //把原本數量+1
+                return product;
+            }
+            return Product.findByPk(productId);
+        })
+        .then((product) => {
+            return userCart.addProduct(product, {
+                through: { quantity: newQuantity }
+            });
+        })
+        //處理總額加總
+        .then(() => {
+            //取得所有產品
+            return userCart.getProducts();
+        })
+        .then((products) => {
+            //算出每個產品的總額，map格式轉換成陣列
+            const productsSums = products.map((product) => product.price * product.cartItem.quantity); //回傳[80,400]
+            //reduce():將陣列處理成單一結果，常用在加總
+            const amount = productsSums.reduce((accumulator, currentValue) => accumulator + currentValue);
+            userCart.amount = amount;
+            return userCart.save(); //儲存，寫入資料庫
+        })
+        .then(() => {
+            res.redirect('/cart'); //導回cart頁面
+        })
+        .catch((err) => {
+            console.log('postCartAddItem error: ', err);
+        })
+};
+
+
+
 //建議用物件寫法
 module.exports = {
     getIndex,
     // getProduct,
     getCart,
+    postCartAddItem,
 }
 
 // const products = [

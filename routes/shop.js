@@ -13,6 +13,7 @@ const router = express.Router();
 //處理路由/的get請求
 router.get('/', shopController.getIndex);
 router.get('/cart', shopController.getCart);
+router.post('/cart-add-item', shopController.postCartAddItem);
 
 //匯出模組
 module.exports = router;

@@ -131,7 +131,7 @@ app.use((req, res, next) => {
     if (!req.session.user) { //沒有資料表示沒有登入
         return next();
     }
-		//如果已登入的話，findByPk:find by primary key，用id去找，取得user model
+	//如果已登入的話，findByPk:find by primary key，用id去找，取得該id的user model，為了拿到sequelize的方法，純資料無法使用這些方法
     User.findByPk(req.session.user.id)
         .then((user) => {
             req.user = user;
