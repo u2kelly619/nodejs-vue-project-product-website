@@ -126,6 +126,21 @@ app.use((req, res, next) => {
     next();
 });
 
+//使用 req.session.user 資料，接著查詢資料庫關於這個使用者的細節資訊，並把它存放到全域變數中（req.user）
+app.use((req, res, next) => {
+    if (!req.session.user) { //沒有資料表示沒有登入
+        return next();
+    }
+		//如果已登入的話，findByPk:find by primary key，用id去找，取得user model
+    User.findByPk(req.session.user.id)
+        .then((user) => {
+            req.user = user;
+            next();
+        })
+        .catch((err) => {
+            console.log('custom middleware - findUserBySessionId error: ', err);
+        })
+});
 
 
 //使用auth.js的模組

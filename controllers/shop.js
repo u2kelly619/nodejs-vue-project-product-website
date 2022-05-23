@@ -31,9 +31,31 @@ const getIndex = (req, res) => {
         })
 };
 
+const getCart = (req, res) => {
+    req.user
+        .getCart()
+        .then((cart) => {
+            return cart.getProducts()
+                .then((products) => {
+                    res.render('shop/cart', {
+                        pageTitle: 'Cart',
+                        products
+                    });
+                })
+                .catch((err) => {
+                    console.log('getCart - cart.getProducts error: ', err);
+                })
+        })
+        .catch((err) => {
+            console.log('getCart - user.getCart error', err);
+        })
+}
+
 //建議用物件寫法
 module.exports = {
-    getIndex
+    getIndex,
+    // getProduct,
+    getCart,
 }
 
 // const products = [

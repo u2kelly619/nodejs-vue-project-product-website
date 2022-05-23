@@ -12,6 +12,7 @@ const router = express.Router();
 //預設發起請求後會自動結束，所以不需要next參數
 //處理路由/的get請求
 router.get('/', shopController.getIndex);
+router.get('/cart', shopController.getCart);
 
 //匯出模組
 module.exports = router;

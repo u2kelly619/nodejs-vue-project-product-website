@@ -10,6 +10,12 @@
             <!-- 如果path為'/'就顯示active，不是就為空 -->
             <a class="nav-link <%= path === '/' ? 'active':'' %>" aria-current="page" href="/">Home</a>
           </li>
+          <!-- 有登入才顯示cart -->
+          <% if (isLogin) { %>
+            <li class="nav-item">
+              <a class="nav-link <%= path === '/cart' ? 'active' : '' %>" aria-current="page" href="/cart">Cart</a>
+            </li>
+          <% } %>
           <!--沒有登入狀態才顯示-->
           <% if (!isLogin) { %>
             <li class="nav-item">

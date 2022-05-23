@@ -40,6 +40,7 @@ const postLogin = (req, res) => {
                 .compare(password, user.password)
                 .then((isMatch) => {
                     if (isMatch) {
+                        //把user資料存在session
                         req.session.user = user;
                         req.session.isLogin = true;
                         return req.session.save((err) => {
