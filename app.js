@@ -108,7 +108,7 @@ app.use(session({
 	resave: false,   // 沒變更內容是否強制回存
 	saveUninitialized: false ,  // 新 session 未變更內容是否儲存
 	cookie: {
-		maxAge: 10000 // session 狀態儲存多久？單位為毫秒
+		maxAge: oneDay // session 狀態儲存多久？單位為毫秒
 	}
 })); 
 

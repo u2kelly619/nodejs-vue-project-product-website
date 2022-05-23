@@ -33,7 +33,7 @@ const getIndex = (req, res) => {
 
 const getCart = (req, res) => {
     req.user
-        .getCart()
+        .getCart() //取得DB物件
         .then((cart) => {
             return cart.getProducts()
                 .then((products) => {
@@ -57,7 +57,7 @@ const postCartAddItem = (req, res) => {
     const { productId } = req.body;
     let userCart; //userCart = []
     let newQuantity = 1;
-    req.user
+    req.user //已是user模型不是純資料，可以使用sequelize的方法，在app.js有用User.findByPk(req.session.user.id)，find by primary key，用id去找，取得該id的user model
         .getCart() //sequelize自動產生的方法
         .then((cart) => {
             userCart = cart;
@@ -100,6 +100,39 @@ const postCartAddItem = (req, res) => {
         })
 };
 
+const postCartDeleteItem = (req, res, next) => {
+    const { productId } = req.body; //指定id不然不知道要刪除哪一筆
+    let userCart;
+    req.user
+        .getCart()
+        .then((cart) => {
+            userCart = cart;
+            return cart.getProducts({ where: { id: productId }});
+			//同個cart的同個product會記錄在同個productId，要刪除該product就要用productId來篩選
+        })
+        .then((products) => {
+            const product = products[0];
+            return product.cartItem.destroy(); //毀滅該筆cartItem
+			//cartItem串起product跟cart表格
+        })
+		//重新計算總額
+        .then(() => {
+            return userCart
+                .getProducts()
+                .then((products) => {
+                    if (products.length) {
+                        const productSums = products.map((product) => product.price * product.cartItem.quantity);
+                        const amount = productSums.reduce((accumulator, currentValue) => accumulator + currentValue);
+                        userCart.amount = amount;
+                        return userCart.save();
+                    }
+                });
+        })
+        .then(() => {
+            res.redirect('/cart');
+        })
+        .catch((err) => console.log(err));
+};
 
 
 //建議用物件寫法
@@ -108,6 +141,7 @@ module.exports = {
     // getProduct,
     getCart,
     postCartAddItem,
+    postCartDeleteItem
 }
 
 // const products = [
