@@ -28,11 +28,12 @@ const postLogin = (req, res) => {
     //findOne({條件}):回傳物件
     User.findOne({ where: { email }}) //email:email
         .then((user) => { //findOne()回傳的物件為user
+            console.log('user', user);
             //如果使用者不存在，顯示錯誤訊息
 			if (!user) {
                 req.flash('errorMessage', '錯誤的 Email 或 Password。');
                 // console.log('login: 找不到此 user 或密碼錯誤');
-                return res.redirect('/login');
+                // return res.redirect('/login'); //導頁在vue導
             }
 			//比對密碼
             bcryptjs
@@ -45,21 +46,23 @@ const postLogin = (req, res) => {
                         req.session.isLogin = true;
                         return req.session.save((err) => {
                             console.log('postLogin - save session error: ', err);
-                            res.redirect('/');
+                            // res.redirect('/'); //導頁在vue導
                         });
                     }
 					//不匹配回到login頁，顯示錯誤訊息
                     req.flash('errorMessage', '錯誤的 Email 或 Password。')
-                    res.redirect('/login');
+                    // res.redirect('/login'); //導頁在vue導
                 })
                 .catch((err) => {
-                    return res.redirect('/login');
+                    console.log(err);
+                    // return res.redirect('/login'); //導頁在vue導
                 })
         })
         .catch((err) => {
             console.log('login error:', err);
         });
 }
+
 
 const postSignup = (req, res) => {
     const { displayName, email, password } = req.body;
