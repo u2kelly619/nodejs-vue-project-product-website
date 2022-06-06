@@ -20,11 +20,7 @@ const getIndex = (req, res) => {
     Product.findAll()
         .then((products) => {
             res.status(200)
-                .render('index', {
-                    path: '/',
-                    pageTitle: 'Book Your Books online',
-                    products
-                });
+            return res.json({message: '連接成功', data: products})
         })
         .catch((err) => {
             console.log('Product.findAll() error: ', err);

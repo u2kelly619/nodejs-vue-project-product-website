@@ -11,20 +11,16 @@ const Product = database.define('product', {
         allowNull: false, // 是否接受 null 值
         primaryKey: true, // 是否為 Primary Key
     },
-    title: {
+    productName: {
+      type: Sequelize.STRING,
+      allowNull: false,
+    },
+    img: {
       type: Sequelize.STRING,
       allowNull: false,
     },
     price: {
       type: Sequelize.DOUBLE,
-      allowNull: false,
-    },
-    imageUrl: {
-      type: Sequelize.STRING,
-      allowNull: false,
-    },
-    description: {
-      type: Sequelize.STRING,
       allowNull: false,
     },
 });
