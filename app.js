@@ -59,6 +59,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //使用bodyParser解析post回來的資料(request body)
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 //使用connect-flash模組
 // app.use(connectFlash());
 
