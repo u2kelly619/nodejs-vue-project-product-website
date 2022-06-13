@@ -23,46 +23,88 @@ const bcryptjs = require('bcryptjs');
 //         });
 // }
 
-const postLogin = (req, res) => {
-    const { email, password } = req.body; //ES6解構賦值，req.body為物件資料
-    //findOne({條件}):回傳物件
-    User.findOne({ where: { email }}) //email:email
-        .then((user) => { //findOne()回傳的物件為user
-            console.log('user', user);
-            //如果使用者不存在，顯示錯誤訊息
-			if (!user) {
-                // req.flash('errorMessage', '錯誤的 Email 或 Password。');
-                console.log('login: 找不到此 user 或密碼錯誤');
-                // return res.redirect('/login'); //導頁在vue導
-            }
-			//比對密碼
-            bcryptjs
-				//用bcryptjs的compare函式比較使用者輸入的密碼和資料庫內的密碼
-                .compare(password, user.password)
-                .then((isMatch) => {
-                    if (isMatch) {
-                        //把user資料存在session
-                        req.session.user = user;
-                        req.session.isLogin = true;
-                        return req.session.save((err) => {
-                            console.log('postLogin - save session error: ', err);
-                            // res.redirect('/'); //導頁在vue導
-                        });
-                    }
-					//不匹配回到login頁，顯示錯誤訊息
-                    // req.flash('errorMessage', '錯誤的 Email 或 Password。')
-                    // res.redirect('/login'); //導頁在vue導
-                })
-                .catch((err) => {
-                    console.log(err);
-                    // return res.redirect('/login'); //導頁在vue導
-                })
-        })
-        .catch((err) => {
-            console.log('login error:', err);
-        });
-}
+// const postLogin = (req, res) => {
+//     let { email, password } = req.body; //ES6解構賦值，req.body為物件資料
+//     //findOne({條件}):回傳物件
+//     console.log(req.body)
+//     User.findOne({ where: { email }}) //email:email
+//         .then((user) => { //findOne()回傳的物件為user
+//             console.log('user', user);
+//             //如果使用者不存在，顯示錯誤訊息
+// 			if (!user) {
+//                 console.log('login: 找不到此 user 或密碼錯誤');
+//                 return res.send({loginSuccess:0})
+//             } else {
+//                 //比對密碼
+//                 bcryptjs
+//                 //用bcryptjs的compare函式比較使用者輸入的密碼和資料庫內的密碼
+//                 .compare(password, user.password)
+//                 .then((isMatch) => {
+//                     if (isMatch) {
+//                         // 把user資料存在session
+//                         req.session.user = user;
+//                         req.session.isLogin = true;
+//                         req.session.save((err) => {
+//                             console.log('postLogin - save session error: ', err);
+//                         });
+//                         return res.send({loginSuccess:1})
+//                     } else {
+//                         //不匹配回到login頁，顯示錯誤訊息
+//                         return res.send({loginSuccess:2})
+//                     }
+                    
+//                 })
+//                 .catch((err) => {
+//                     console.log(err);
+//                     // return res.redirect('/login'); //導頁在vue導
+//                 })
+//             }
+			
+//         })
+//         .catch((err) => {
+//             console.log('login error:', err);
+//         });
+// }
 
+const postLogin = (req, res)=>{
+    let{email, password} = req.body
+    console.log(email, password);
+    User.findOne({
+        where: {email}
+    })
+    .then((user)=>{
+        if(user){
+            console.log(user)
+            //比對密碼
+            bcryptjs
+            //用bcryptjs的compare函式比較使用者輸入的密碼和資料庫內的密碼
+            .compare(password, user.password)
+            .then((isMatch) => {
+                if (isMatch) {
+                    // 把user資料存在session
+                    req.session.user = user;
+                    req.session.isLogin = true;
+                    req.session.save((err) => {
+                        console.log('postLogin - save session error: ', err);
+                    });
+                    console.log("login success")
+                    return res.send({loginSuccess:1})
+                } else {
+                    //不匹配回到login頁，顯示錯誤訊息
+                    console.log("password incorrect")
+                    return res.send({loginSuccess:2})
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+        }
+        else{
+            console.log('no user');
+            return res.send({loginSuccess:0})
+        }
+    })
+}
 
 // const postSignup = (req, res) => {
 //     const { displayName, email, password } = req.body;
@@ -131,9 +173,17 @@ const postLogout = (req, res) => {
     //destroy()清除session，要傳入一個callback function
     req.session.destroy((err) => {
         console.log('session destroy() error: ', err);
-		//處理完後導回login頁
-        res.redirect('/login');
+        // return res.send({ loginStatus:0 })
     });
+}
+
+const loginStatus = (req, res) => {
+    if(res.locals.isLogin){
+        return res.send({ loginStatus:1 })
+    } else {
+        return res.send({ loginStatus:0 })
+    }
+
 }
 
 //建議用物件寫法
@@ -143,4 +193,6 @@ module.exports = {
     postLogin,
     postSignup,
     postLogout,
+    loginStatus
+    // test
 }
